@@ -36,7 +36,7 @@ distance_factor = 0.5
 t = np.linspace(0, 1, 1000)
 interference = 0.1 * np.sin(100 * t)
 gain = 1.0
-max_snr_display = 25  # For scaling the bar
+max_snr_display = 25  # For scaling the bar and graph
 
 # Simulation Stages
 stages = [
@@ -153,6 +153,14 @@ while running:
     if current_stage == 4 and modem_gain > 0:
         gain_text = small_font.render(f"Modem Gain: {modem_gain:.4f}", True, BLUE)
         window.blit(gain_text, (WINDOW_WIDTH // 2 - gain_text.get_width() // 2, bar_y + bar_max_height + 60))
+
+    # Draw SNR Line Graph
+    if len(snr_values) > 1:
+        graph_y_base = 500  # Base Y position for the graph
+        graph_height = 200  # Height of the graph area
+        points = [(i * (WINDOW_WIDTH - 100) / (len(snr_values) - 1) + 50,
+                   graph_y_base - (snr / max_snr_display) * graph_height) for i, snr in enumerate(snr_values)]
+        pygame.draw.lines(window, RED, False, points, 2)
 
     # Draw Simulate Button
     pygame.draw.rect(window, BLUE if not simulation_running else GRAY, button_rect)
