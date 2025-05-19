@@ -1,1 +1,4 @@
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c34279151fa647168478023ffdc9c221)](https://app.codacy.com/gh/Stephenvega2/Classical-enhanced-signal-system-?utm_source=github.com&utm_medium=referral&utm_content=Stephenvega2/Classical-enhanced-signal-system-&utm_campaign=Badge_Grade)
+
 this is forcresearch and collaboration dont use in production
