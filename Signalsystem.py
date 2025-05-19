@@ -3,6 +3,26 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import argparse
 import time
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+import hashlib
+
+# AES-256 encryption/decryption functions
+def generate_aes256_key():
+    return get_random_bytes(32)  # 256 bits
+
+def generate_aes256_key_from_params(params):
+    param_bytes = np.array(params).tobytes()
+    return hashlib.sha256(param_bytes).digest()
+
+def encrypt_aes256(key, data):
+    cipher = AES.new(key, AES.MODE_EAX)
+    ciphertext, tag = cipher.encrypt_and_digest(data.encode('utf-8'))
+    return cipher.nonce, ciphertext, tag
+
+def decrypt_aes256(key, nonce, ciphertext, tag):
+    cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+    return cipher.decrypt_and_verify(ciphertext, tag).decode('utf-8')
 
 # Circuit Simulation
 def simulate_circuit_with_grounding(t, surge_voltage=10000, R_ground=10):
@@ -116,12 +136,12 @@ def check_satellite():
 def simulate_adhoc_network(snr_values):
     return snr_values * 1.2
 
-# Simulate Entanglement
+# Simulate Entanglement (for educational purposes)
 def simulate_entanglement():
     counts = {"00": 500, "11": 500}
     return counts
 
-# Simulate QKD
+# Simulate QKD (for educational purposes)
 def simulate_bb84():
     key = np.random.randint(0, 2, 8)
     return key
@@ -224,6 +244,21 @@ def run_field_test(surge_voltage=10000, initial_snr=10, enable_simulations=False
         print(f"QKD Key: {signal_results['qkd_key']}")
     if satellite_status:
         print(f"Satellite Status: {satellite_status}")
+
+    # --- AES-256 Secure Communication Example ---
+    print("\nAES-256 Secure Message Transmission Example (Key derived from Circuit Stability):")
+    aes_key = generate_aes256_key_from_params(circuit_results['optimal_parameters'])
+    message = "Field test results: circuit and signal stable."
+    print(f"Alice's original message: {message}")
+
+    nonce, ciphertext, tag = encrypt_aes256(aes_key, message)
+    print("Alice encrypts and sends ciphertext to Bob...")
+
+    try:
+        decrypted_message = decrypt_aes256(aes_key, nonce, ciphertext, tag)
+        print(f"Bob successfully decrypted: {decrypted_message}")
+    except Exception as e:
+        print("Decryption failed! Possible tampering or key mismatch.")
 
     return circuit_results, signal_results
 
